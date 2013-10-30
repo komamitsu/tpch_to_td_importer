@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+require 'tpch_to_td_importer'
+
+if $0 == __FILE__
+  apikey = ARGV.shift
+  db = ARGV.shift
+  raise "usage: #{$0} apikey database" unless apikey && db
+  
+  importer = TpchToTdImporter::Importer.new(apikey)
+  importer.import(db)
+end
+
