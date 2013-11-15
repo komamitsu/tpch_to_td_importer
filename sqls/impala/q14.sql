@@ -7,9 +7,9 @@ select
     end
 ) / sum(l_extendedprice * (1 - l_discount)) as promo_revenue
 from 
-lineitem, 
+lineitem,
 part
 where 
 l_partkey = p_partkey
-and l_shipdate >= 809881200
-and l_shipdate < 809881200 + 3600 * 24 * 30
+and lineitem.time >= 809881200
+and lineitem.time < 809881200 + 3600 * 24 * 30

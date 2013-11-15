@@ -9,6 +9,6 @@ select
 from lineitem l
 join part p on l.l_partkey = p.p_partkey
 where 
-l.l_shipdate >= 809881200
-and l.l_shipdate < 809881200 + 3600 * 24 * 30
+l.time >= 809881200
+and l.time < 809881200 + 3600 * 24 * 30
 
