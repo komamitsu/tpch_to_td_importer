@@ -12,11 +12,11 @@ dataset: $(DATASET)
 dbgen: $(DBGEN_DIR)/dbgen
 
 $(TPCH_DIR).zip:
-	-mkdir -p $(@D)
+	mkdir -p $(@D)
 	curl -o $@ http://www.tpc.org/tpch/spec/tpch_2_16_1.zip
 
 $(TPCH_DIR): $(TPCH_DIR).zip
-	-mkdir -p $(TARGET)/tpch
+	mkdir -p $(TARGET)/tpch
 	unzip -o $< -d $(TARGET)/tpch/
 
 $(DBGEN_DIR)/dbgen: $(DBGEN_DIR)/Makefile
@@ -33,7 +33,7 @@ $(DBGEN_DIR)/Makefile: $(TPCH_DIR)
 
 
 $(DATASET_DIR)/%.log : $(DBGEN_DIR)/dbgen
-	-mkdir -p $(@:.log=)
+	mkdir -p $(@:.log=)
 	cd $(DBGEN_DIR) && \
 	./dbgen -fv -s $(@F) 
 	mv $(DBGEN_DIR)/*.tbl $(@:.log=)
