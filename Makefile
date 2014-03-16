@@ -1,8 +1,14 @@
 
+SCALING_FACTORS:=0.01 0.1 
+
 TARGET:=target
 TPCH_DIR:=$(TARGET)/tpch/tpch_2_16_1
 DBGEN_DIR:=$(TPCH_DIR)/dbgen
 
+DATASET_DIR:=$(TARGET)/dataset
+DATASET:=$(addsuffix .log,$(addprefix $(DATASET_DIR)/,$(SCALING_FACTORS)))
+
+dataset: $(DATASET)
 dbgen: $(DBGEN_DIR)/dbgen
 
 $(TPCH_DIR).zip:
@@ -26,15 +32,11 @@ $(DBGEN_DIR)/Makefile: $(TPCH_DIR)
 	perl -i -npe "s/CFLAGS\s+=(.*)/CFLAGS=\1 -D_POSIX_SOURCE/" Makefile 
 
 
-SCALING_FACTORS:=0.01 0.1 
-
-DATASET:=$(addprefix $(TARGET)/tpch/,$(SCALING_FACTORS))
-
-dataset: $(DATASET)
-
-$(TARGET)/tpch/% : $(DBGEN_DIR)/dbgen
-	-mkdir -p $@
+$(DATASET_DIR)/%.log : $(DBGEN_DIR)/dbgen
+	-mkdir -p $(@:.log=)
 	cd $(DBGEN_DIR) && \
 	./dbgen -fv -s $(@F) 
-	mv $(DBGEN_DIR)/*.tbl $@
+	mv $(DBGEN_DIR)/*.tbl $(@:.log=)
+	touch $@
+
 
