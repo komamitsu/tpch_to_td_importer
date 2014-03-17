@@ -57,7 +57,13 @@ module TpchToTdImporter
       @apikey = apikey
     end
     
-    def import(db)
+    def import(db, indir)
+      tdcmd = "td -k #{@apikey}"
+      cmd = <<-EOS
+        #{tdcmd} db:create #{db}
+      EOS
+      puts cmd
+      puts `#{cmd}`
       TABLES.each do |tbl|
         name = tbl[:name]
         col_names = (tbl[:col_names] + ['dummy']).map{|col_name| "#{tbl[:prefix]}_#{col_name}"}.join(',')
@@ -65,19 +71,19 @@ module TpchToTdImporter
         pk = "#{tbl[:prefix]}_#{tbl[:pk]}"
       
         cmd = <<-EOS
-          td -k #{@apikey} table:create #{db} #{name}
+          #{tdcmd} table:create #{db} #{name}
         EOS
         puts cmd
         puts `#{cmd}`
       
         cmd = <<-EOS
-          td -k #{@apikey} schema:set #{db} #{name} #{col_names.split(',').zip(col_types.split(',')).map{|x| x[0] + ':' + x[1]}.join(' ')}
+          #{tdcmd} schema:set #{db} #{name} #{col_names.split(',').zip(col_types.split(',')).map{|x| x[0] + ':' + x[1]}.join(' ')}
         EOS
         puts cmd
         puts `#{cmd}`
       
         cmd = <<-EOS
-          td -k #{@apikey} import:upload --auto-create #{db}.#{name} --auto-perform --auto-commit --auto-delete --parallel 8 --format csv --delimiter "|" --columns #{col_names} --column-types #{col_types} -t #{pk} #{name}.tbl
+          #{tdcmd} import:upload --auto-create #{db}.#{name} --auto-perform --auto-commit --auto-delete --parallel 8 --format csv --delimiter "|" --columns #{col_names} --column-types #{col_types} -t #{pk} #{indir}/#{name}.tbl
         EOS
         puts cmd
         puts `#{cmd}`
