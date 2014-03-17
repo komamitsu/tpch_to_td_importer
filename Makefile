@@ -25,11 +25,11 @@ $(DBGEN_DIR)/dbgen: $(DBGEN_DIR)/Makefile
 $(DBGEN_DIR)/Makefile: $(TPCH_DIR)
 	cd $(DBGEN_DIR) && \
 	cp makefile.suite Makefile && \
-	perl -i -npe "s/CC\s*=/CC=gcc/" Makefile && \
-	perl -i -npe "s/DATABASE\s*=.*/DATABASE=ORACLE/" Makefile && \
-	perl -i -npe "s/MACHINE\s+=.*/MACHINE=LINUX/" Makefile && \
-	perl -i -npe "s/WORKLOAD\s+=.*/WORKLOAD=TPCH/" Makefile && \
-	perl -i -npe "s/CFLAGS\s+=(.*)/CFLAGS=\1 -D_POSIX_SOURCE/" Makefile 
+	perl -i -npe "s/\bCC\s*=/CC=gcc/" Makefile && \
+	perl -i -npe "s/\bDATABASE\s*=.*/DATABASE=ORACLE/" Makefile && \
+	perl -i -npe "s/\bMACHINE\s+=.*/MACHINE=LINUX/" Makefile && \
+	perl -i -npe "s/\bWORKLOAD\s+=.*/WORKLOAD=TPCH/" Makefile && \
+	perl -i -npe "s/\bCFLAGS\s+=(.*)/CFLAGS=\1 -D_POSIX_SOURCE/" Makefile 
 
 
 $(DATASET_DIR)/%.log : $(DBGEN_DIR)/dbgen
