@@ -44,12 +44,14 @@ module TpchToTdImporter
        :col_names => %w|orderkey custkey orderstatus totalprice orderdate orderpriority clerk  shippriority comment|,
        :col_types => %w|long     long    string      double     long      string        string int          string|,
        :pk => 'orderdate',
+       :time_columns => %w|orderdate|
       },
       {:name => 'lineitem',
        :prefix => 'l',
        :col_names => %w|orderkey partkey suppkey linenumber quantity extendedprice discount tax returnflag linestatus shipdate commitdate receiptdate shipinstruct shipmode comment|,
        :col_types => %w|long     long    long    long       double   double        double   double string  string     long     long       long        string       string   string|,
        :pk => 'shipdate',
+       :time_columns => %w|shipdate commitdate receiptdate|
       },
     ]
 
@@ -83,7 +85,7 @@ module TpchToTdImporter
         puts `#{cmd}`
       
         cmd = <<-EOS
-          #{tdcmd} import:upload --auto-create #{db}.#{name} --auto-perform --auto-commit --auto-delete --parallel 8 --format csv --delimiter "|" --columns #{col_names} --column-types #{col_types} -t #{pk} #{indir}/#{name}.tbl
+          #{tdcmd} import:upload --auto-create #{db}.#{name} --auto-perform --auto-commit --auto-delete --parallel 8 --format csv --delimiter "|" --columns #{col_names} --column-types #{col_types} -t #{pk} -T "%Y-%m-%d" #{indir}/#{name}.tbl
         EOS
         puts cmd
         puts `#{cmd}`
