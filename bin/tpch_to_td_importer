@@ -3,10 +3,12 @@ require 'tpch_to_td_importer'
 require 'optparse'
 
 if $0 == __FILE__
+  $dryrun = false
   opt = OptionParser.new
   opt.on('-k APIKEY') { |v| $apikey = v }
   opt.on('-d DBNAME') { |v| $db = v }
   opt.on('-i DATASET_DIR') { |v| $indir = v }
+  opt.on('--dry-run') { |v| $dryrun = true }
 
   opt.parse!(ARGV)
   raise "usage: #{$0} -k apikey -d database -i (dataset_dir)" unless $apikey && $db && $indir
@@ -15,6 +17,6 @@ if $0 == __FILE__
   puts "tpch *.tbl input directory: #{$indir}"  
  
   importer = TpchToTdImporter::Importer.new($apikey)
-  importer.import($db, $indir)
+  importer.import($db, $indir, $dryrun)
 end
 

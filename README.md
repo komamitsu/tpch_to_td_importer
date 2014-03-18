@@ -16,6 +16,11 @@ Or install it yourself as:
 
     $ gem install tpch_to_td_importer
 
+## Prerequisite
+Install td-toolbeit, then update the td:import command to the latest version with the following command:
+
+    $ td import:jar_update
+
 ## Usage
 
 First, generate 100GB of TPC-H data in target/dataset/100 folder:
