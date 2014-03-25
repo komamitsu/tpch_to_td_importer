@@ -42,14 +42,14 @@ module TpchToTdImporter
       {:name => 'orders',
        :prefix => 'o',
        :col_names => %w|orderkey custkey orderstatus totalprice orderdate orderpriority clerk  shippriority comment|,
-       :col_types => %w|long     long    string      double     string      string        string int          string|,
+       :col_types => %w|long     long    string      double     long      string        string int          string|,
        :pk => 'orderdate',
        :time_columns => %w|orderdate|
       },
       {:name => 'lineitem',
        :prefix => 'l',
        :col_names => %w|orderkey partkey suppkey linenumber quantity extendedprice discount tax returnflag linestatus shipdate commitdate receiptdate shipinstruct shipmode comment|,
-       :col_types => %w|long     long    long    long       double   double        double   double string  string     string   string     string      string       string   string|,
+       :col_types => %w|long     long    long    long       double   double        double   double string  string     long     long       long        string       string   string|,
        :pk => 'shipdate',
        :time_columns => %w|shipdate commitdate receiptdate|
       },
