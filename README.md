@@ -23,13 +23,13 @@ Install td-toolbeit, then update the td:import command to the latest version wit
 
 ## Usage
 
-First, generate 100GB of TPC-H data in target/dataset/100 folder:
-    $ make SCALING_FACTORS="100"
+This example produces 10GB of TPC-H data in target/dataset/10 folder:
+    $ make SCALING_FACTORS="10"
 
-Next, run tpch_to_td_importer:
-    # Upload the generated dataset in `target/dataset/100` (-i option) to the Treasure Data service.
+To import the generated dataset to TD, run tpch_to_td_importer:
+    # Upload the generated dataset in `target/dataset/10` (-i option) to the Treasure Data service.
     # The uploaded data is stored in `tpch` database. (-d option)
-    $ bundle exec bin/tpch_to_td_importer -k myapykey12345678 -d tpch -i target/dataset/100
+    $ bundle exec bin/tpch_to_td_importer -k myapykey12345678 -d tpch -i target/dataset/10
 
     $ cd foo/tpch_to_td_importer
     $ bundle exec bin/tpch_to_td_importer myapikey12345678 mydatabase
