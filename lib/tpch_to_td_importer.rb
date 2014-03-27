@@ -85,7 +85,7 @@ module TpchToTdImporter
         puts cmd
         puts `#{cmd}` unless dryrun
       
-        tblFile = if tbl[:time_columns].null? "#{indir}/#{name}.tbl" else "#{indir}/#{name}.converted.tbl"
+        tblFile = tbl.has_key?(:time_columns) ? "#{indir}/#{name}.converted.tbl" : "#{indir}/#{name}.tbl"
         cmd = <<-EOS
           #{tdcmd} import:upload --auto-create #{db}.#{name} --auto-perform --auto-commit --auto-delete --parallel 8 --format csv --delimiter "|" --columns #{col_names} --column-types #{col_types} -t #{pk} -T '%Y-%m-%d' -error-records-handling abort #{tblFile}
         EOS
