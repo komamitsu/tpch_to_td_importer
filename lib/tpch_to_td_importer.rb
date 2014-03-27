@@ -59,7 +59,7 @@ module TpchToTdImporter
       @apikey = apikey
     end
 
-    
+
     def import(db, indir, dryrun)
       tdcmd = "td -k #{@apikey}"
       cmd = <<-EOS
@@ -85,8 +85,9 @@ module TpchToTdImporter
         puts cmd
         puts `#{cmd}` unless dryrun
       
+        tblFile = if tbl[:time_columns].null? "#{indir}/#{name}.tbl" else "#{indir}/#{name}.converted.tbl"
         cmd = <<-EOS
-          #{tdcmd} import:upload --auto-create #{db}.#{name} --auto-perform --auto-commit --auto-delete --parallel 8 --format csv --delimiter "|" --columns #{col_names} --column-types #{col_types} -t #{pk} -T '%Y-%m-%d' -error-records-handling abort #{indir}/#{name}.tbl
+          #{tdcmd} import:upload --auto-create #{db}.#{name} --auto-perform --auto-commit --auto-delete --parallel 8 --format csv --delimiter "|" --columns #{col_names} --column-types #{col_types} -t #{pk} -T '%Y-%m-%d' -error-records-handling abort #{tblFile}
         EOS
         puts cmd
         puts `#{cmd}` unless dryrun
