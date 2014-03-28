@@ -26,6 +26,13 @@ Install td-toolbeit, then update the td:import command to the latest version wit
 This example produces 10GB of TPC-H data in target/dataset/10 folder:
     $ make SCALING_FACTORS="10"
 
+TPC-H's dataset has multiple datetime columns. To convert them into long values, use converter, written in Scala:
+    $ cd converter; ./sbt pack
+    $ cd ..
+    $ converter/target/pack/bin/converter -i target/dataset/10
+
+This command will generate `target/dataset/10/*.converted.tbl` files.
+
 To import the generated dataset to TD, run tpch_to_td_importer:
     # Upload the generated dataset in `target/dataset/10` (-i option) to the Treasure Data service.
     # The uploaded data is stored in `tpch` database. (-d option)

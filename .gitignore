@@ -19,3 +19,6 @@ target
 *.log
 *.lck
 out
+project
+atlassian-ide-plugin.xml
+.idea
