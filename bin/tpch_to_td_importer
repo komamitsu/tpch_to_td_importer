@@ -7,7 +7,7 @@ if $0 == __FILE__
   db = nil
   indir = nil
   dryrun = false
-  
+
   opt = OptionParser.new
   opt.on('-k APIKEY') { |v| apikey = v }
   opt.on('-d DBNAME') { |v| db = v }
@@ -18,7 +18,7 @@ if $0 == __FILE__
   raise "usage: #{$0} -k apikey -d database -i (dataset_dir)" unless apikey && db && indir
  
   puts "database: #{db}"
-  puts "tpch *.tbl input directory: #{$indir}"  
+  puts "tpch *.tbl input directory: #{indir}"  
  
   importer = TpchToTdImporter::Importer.new(apikey)
   importer.import(db, indir, dryrun)
