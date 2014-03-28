@@ -55,20 +55,30 @@ module TpchToTdImporter
       },
     ]
 
-    def initialize(apikey)
-      @apikey = apikey
+    def initialize(config)
+      @config = config
     end
 
+    def run(cmd)
+      puts cmd.strip
+      puts `#{cmd}` unless @config[:dryrun]
+    end
 
-    def import(db, indir, dryrun)
-      tdcmd = "td -k #{@apikey}"
+    def import
+      tdcmd = "td -k #{@config[:apikey]}"
+
+      # Create a database
+      db = @config[:db]
       cmd = <<-EOS
         #{tdcmd} db:create #{db}
       EOS
-      puts cmd
-      puts `#{cmd}` unless dryrun
+      run(cmd)
+
+      # Create tables and run import command
       TABLES.each do |tbl|
         name = tbl[:name]
+        next unless @config[:table_to_upload].nil? || @config[:table_to_upload] == name
+
         col_names = (tbl[:col_names] + ['dummy']).map{|col_name| "#{tbl[:prefix]}_#{col_name}"}.join(',')
         col_types = (tbl[:col_types] + ['string']).join(',')
         pk = "#{tbl[:prefix]}_#{tbl[:pk]}"
@@ -76,21 +86,19 @@ module TpchToTdImporter
         cmd = <<-EOS
           #{tdcmd} table:create #{db} #{name}
         EOS
-        puts cmd
-        puts `#{cmd}` unless dryrun
+        run(cmd)
       
         cmd = <<-EOS
           #{tdcmd} schema:set #{db} #{name} #{col_names.split(',').zip(col_types.split(',')).map{|x| x[0] + ':' + x[1]}.join(' ')}
         EOS
-        puts cmd
-        puts `#{cmd}` unless dryrun
+        run(cmd)
       
+        indir = @config[:indir]
         tblFile = tbl.has_key?(:time_columns) ? "#{indir}/#{name}.converted.tbl" : "#{indir}/#{name}.tbl"
         cmd = <<-EOS
           #{tdcmd} import:upload --auto-create #{db}.#{name} --auto-perform --auto-commit --auto-delete --parallel 8 --format csv --delimiter "|" --columns #{col_names} --column-types #{col_types} -t #{pk} -T '%Y-%m-%d' -error-records-handling abort #{tblFile}
         EOS
-        puts cmd
-        puts `#{cmd}` unless dryrun
+        run(cmd)
       end
     end
   end
