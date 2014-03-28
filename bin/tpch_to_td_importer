@@ -3,24 +3,29 @@ require 'tpch_to_td_importer'
 require 'optparse'
 
 if $0 == __FILE__
-  apikey = nil
-  db = nil
-  indir = nil
-  dryrun = false
+
+  config = {
+    :apikey => nil,
+    :db => nil,
+    :indir => nil,
+    :dryrun => false,
+    :table_to_upload => nil
+  }
 
   opt = OptionParser.new
-  opt.on('-k APIKEY') { |v| apikey = v }
-  opt.on('-d DBNAME') { |v| db = v }
-  opt.on('-i DATASET_DIR') { |v| indir = v }
-  opt.on('--dry-run') { |v| dryrun = true }
+  opt.on('-k APIKEY') { |v| config[:apikey] = v }
+  opt.on('-d DBNAME') { |v| config[:db] = v }
+  opt.on('-i DATASET_DIR') { |v| config[:indir] = v }
+  opt.on('--dry-run') { |v| config[:dryrun] = true }
+  opt.on('-t TABLE') { |v| config[:table_to_upload] = v }
 
   opt.parse!(ARGV)
-  raise "usage: #{$0} -k apikey -d database -i (dataset_dir)" unless apikey && db && indir
+  raise "usage: #{$0} -k apikey -d database -i (dataset_dir) -t (TPC-H table name to upload: optional)" unless config[:apikey] && config[:db] && config[:indir]
  
-  puts "database: #{db}"
-  puts "tpch *.tbl input directory: #{indir}"  
+  puts "database: #{config[:db]}"
+  puts "tpch *.tbl input directory: #{config[:indir]}"  
  
-  importer = TpchToTdImporter::Importer.new(apikey)
-  importer.import(db, indir, dryrun)
+  importer = TpchToTdImporter::Importer.new(config)
+  importer.import()
 end
 
