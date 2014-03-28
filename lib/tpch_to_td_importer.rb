@@ -44,20 +44,29 @@ module TpchToTdImporter
        :col_names => %w|orderkey custkey orderstatus totalprice orderdate orderpriority clerk  shippriority comment|,
        :col_types => %w|long     long    string      double     long      string        string int          string|,
        :pk => 'orderdate',
+       :time_columns => %w|orderdate|
       },
       {:name => 'lineitem',
        :prefix => 'l',
        :col_names => %w|orderkey partkey suppkey linenumber quantity extendedprice discount tax returnflag linestatus shipdate commitdate receiptdate shipinstruct shipmode comment|,
        :col_types => %w|long     long    long    long       double   double        double   double string  string     long     long       long        string       string   string|,
        :pk => 'shipdate',
+       :time_columns => %w|shipdate commitdate receiptdate|
       },
     ]
 
     def initialize(apikey)
       @apikey = apikey
     end
+
     
-    def import(db)
+    def import(db, indir, dryrun)
+      tdcmd = "td -k #{@apikey}"
+      cmd = <<-EOS
+        #{tdcmd} db:create #{db}
+      EOS
+      puts cmd
+      puts `#{cmd}` unless dryrun
       TABLES.each do |tbl|
         name = tbl[:name]
         col_names = (tbl[:col_names] + ['dummy']).map{|col_name| "#{tbl[:prefix]}_#{col_name}"}.join(',')
@@ -65,22 +74,22 @@ module TpchToTdImporter
         pk = "#{tbl[:prefix]}_#{tbl[:pk]}"
       
         cmd = <<-EOS
-          td -k #{@apikey} table:create #{db} #{name}
+          #{tdcmd} table:create #{db} #{name}
         EOS
         puts cmd
-        puts `#{cmd}`
+        puts `#{cmd}` unless dryrun
       
         cmd = <<-EOS
-          td -k #{@apikey} schema:set #{db} #{name} #{col_names.split(',').zip(col_types.split(',')).map{|x| x[0] + ':' + x[1]}.join(' ')}
+          #{tdcmd} schema:set #{db} #{name} #{col_names.split(',').zip(col_types.split(',')).map{|x| x[0] + ':' + x[1]}.join(' ')}
         EOS
         puts cmd
-        puts `#{cmd}`
+        puts `#{cmd}` unless dryrun
       
         cmd = <<-EOS
-          td -k #{@apikey} import:upload --auto-create #{db}.#{name} --auto-perform --auto-commit --auto-delete --parallel 8 --format csv --delimiter "|" --columns #{col_names} --column-types #{col_types} -t #{pk} #{name}.tbl
+          #{tdcmd} import:upload --auto-create #{db}.#{name} --auto-perform --auto-commit --auto-delete --parallel 8 --format csv --delimiter "|" --columns #{col_names} --column-types #{col_types} -t #{pk} -T '%Y-%m-%d' -error-records-handling abort #{indir}/#{name}.tbl
         EOS
         puts cmd
-        puts `#{cmd}`
+        puts `#{cmd}` unless dryrun
       end
     end
   end
