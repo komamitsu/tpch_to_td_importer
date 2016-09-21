@@ -65,7 +65,7 @@ module TpchToTdImporter
     end
 
     def import
-      tdcmd = "td -k #{@config[:apikey]}"
+      tdcmd = "td -k #{@config[:apikey]} -e #{@config[:endpoint]}"
 
       # Create a database
       db = @config[:db]
