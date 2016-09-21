@@ -1,5 +1,4 @@
-
-packSettings 
+packSettings
 
 name := "tpch-converter"
 
