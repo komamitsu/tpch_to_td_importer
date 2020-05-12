@@ -6,6 +6,7 @@ if $0 == __FILE__
 
   config = {
     :apikey => nil,
+    :endpoint => 'http://api.treasuredata.com',
     :db => nil,
     :indir => nil,
     :dryrun => false,
@@ -14,6 +15,7 @@ if $0 == __FILE__
 
   opt = OptionParser.new
   opt.on('-k APIKEY') { |v| config[:apikey] = v }
+  opt.on('-e ENDPOINT') { |v| config[:endpoint] = v }
   opt.on('-d DBNAME') { |v| config[:db] = v }
   opt.on('-i DATASET_DIR') { |v| config[:indir] = v }
   opt.on('--dry-run') { |v| config[:dryrun] = true }
